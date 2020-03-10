@@ -52,10 +52,12 @@ def cleanFile(sourcePath,destPath):
                     users.append(u)
                 u.add_tweet(row['text'])
                 lastUser = row['user']
-        with open(destPath, mode='w',encoding='ISO-8859–1' ) as csv_file:
-            for u in users:
-                csv_file.write(str(u)+'\n')
-def readFile(sourcePath):
+            with open(destPath, mode='w',encoding='ISO-8859–1' ) as csv_file:
+                for u in users:
+                    csv_file.write(str(u)+'\n')
+        else:
+            print('Clean file already exists. Moving on')
+def readFile(sourcePath,delim):
     users = []
     tfidf = TfidfVectorizer()
     df = pd.read_csv(sourcePath,encoding='ISO-8859–1',names = ['user','text'])  
@@ -68,4 +70,4 @@ delim = '^~'
 sourcePath = './data/raw_data.csv'
 destPath = './data/tweets.csv'
 cleanFile(sourcePath,destPath)
-readFile(destPath)
+readFile(destPath,delim)
