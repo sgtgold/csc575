@@ -2,6 +2,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 import os.path
 from os import path
+import errno
 
 class Cluster:
     def __init__(self,user):
@@ -57,6 +58,9 @@ def cleanFile(sourcePath,destPath):
                     csv_file.write(str(u)+'\n')
         else:
             print('Clean file already exists. Moving on')
+    else:   
+        print('Source File Does not exist')
+        raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), sourcePath)  
 def readFile(sourcePath,delim):
     users = []
     tfidf = TfidfVectorizer()
