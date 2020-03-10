@@ -1,8 +1,11 @@
-from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 import os.path
+import nltk
 from os import path
+from nltk.stem.porter import PorterStemmer
+from sklearn.feature_extraction.text import TfidfVectorizer
 import errno
+
 
 class Cluster:
     def __init__(self,user):
@@ -61,15 +64,25 @@ def cleanFile(sourcePath,destPath):
     else:   
         print('Source File Does not exist')
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), sourcePath)  
+
+
+def tokenize(text):
+    tokens = nltk.word_tokenize(text)
+    stems = []
+    for item in tokens:
+        stems.append(PorterStemmer().stem(item))
+    return stems
+
+
 def readFile(sourcePath,delim):
     users = []
-    tfidf = TfidfVectorizer()
+    tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english')
     df = pd.read_csv(sourcePath,encoding='ISO-8859–1',names = ['user','text'])  
     for index, row in df.iterrows():
         u = User(row['user'])
-        users.append(u)
         u.add_tweet(row['text'])
         u.eval_corpus(tfidf,delim)
+        users.append(u)
 delim = '^~'
 sourcePath = './data/raw_data.csv'
 destPath = './data/tweets.csv'
