@@ -107,45 +107,53 @@ def literal_return(val):
         return val
 
 
-def readFileCreateTFIDF(sourcePath,tokenPath,delim):
-    if not path.exists(tokenPath):
-        start_time = time.time()
-        users = []
-        tfidf=TfidfVectorizer()
+def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,delim):
+    if not path.exists(picklePath):
+        if not path.exists(tokenPath):
+            start_time = time.time()
+            users = []
+            tfidf=TfidfVectorizer()
     
-        totalvocab_stemmed = []
-        totalvocab_tokenized = []
+            totalvocab_stemmed = []
+            totalvocab_tokenized = []
 
-        df = pd.read_csv(sourcePath,encoding='ISO-8859–1',names = ['user','text'])  
-        df['stems_tokens'] = df['text'].apply(tokenize_and_stem)
-        df['tokens'] = df['text'].apply(tokenize)
-        print("--- %s minutes ---" % ((time.time() - start_time)/60))
-        df.to_csv(tokenPath,index=False)
-    else:
-        all_vocab = []
-        df = pd.read_csv(tokenPath)
-        #df['tokens'] = df['tokens'].apply(literal_return)
-        #df['stems_tokens'] = df['stems_tokens'].apply(literal_return)
-        #all_vocab = np.concatenate(df['tokens'])
-        #all_stemed_vocab = np.concatenate(df['stems_tokens'])
-        #print(all_vocab)
-        #print(all_stemed_vocab)
+            df = pd.read_csv(sourcePath,encoding='ISO-8859–1',names = ['user','text'])  
+            df['stems_tokens'] = df['text'].apply(tokenize_and_stem)
+            df['tokens'] = df['text'].apply(tokenize)
+            print("--- %s minutes ---" % ((time.time() - start_time)/60))
+            df.to_csv(tokenPath,index=False)
+        else:
+            all_vocab = []
+            df = pd.read_csv(tokenPath)
+            #df['tokens'] = df['tokens'].apply(literal_return)
+            #df['stems_tokens'] = df['stems_tokens'].apply(literal_return)
+            #all_vocab = np.concatenate(df['tokens'])
+            #all_stemed_vocab = np.concatenate(df['stems_tokens'])
+            #print(all_vocab)
+            all_text = df['text'].apply(' '.join)
+            #print(all_stemed_vocab)
 
-        start_time = time.time()
-        #define vectorizer parameters
-        tfidf_vectorizer = TfidfVectorizer(max_df=0.8, max_features=200000,
-                                         min_df=0.2, stop_words='english',
-                                         use_idf=True, tokenizer=tokenize_and_stem, ngram_range=(1,3))
+            start_time = time.time()
+            #define vectorizer parameters
+            tfidf_vectorizer = TfidfVectorizer(max_df=0.8, max_features=200000,
+                                             min_df=0.2, stop_words='english',
+                                             use_idf=True, tokenizer=tokenize_and_stem, ngram_range=(1,3))
 
-        tfidf_matrix = tfidf_vectorizer.fit_transform(df['text']) #fit the vectorizer to synopses
-        print("--- %s minutes ---" % ((time.time() - start_time)/60))
+            tfidf_matrix = tfidf_vectorizer.fit_transform(all_text) #fit the vectorizer to synopses
+
         
-        pickle.dump(tfidf, open("tfidf_matrix.pickle", "wb"))
-     
+            pickle.dump(tfidf_matrix, open(picklePath, "wb"))
+    else:
+        print('tfidf_matrix pickle exists - moving on')
+         
 delim = '^~'
 sourcePath = './data/raw_data.csv'
 destPath = './data/tweets.csv'
 tokenPath = './data/tokens.csv'
+picklePath = './data/tfidf_matrix.pickle'
 cleanFile(sourcePath,destPath)
-readFileCreateTFIDF(destPath,tokenPath,delim)
+readFileCreateTFIDF(destPath,tokenPath,picklePath,delim)
+pickle_in = open(picklePath,"rb")
+tfidf_matrix = pickle.load(pickle_in)
+print(tfidf_matrix.shape)
 
