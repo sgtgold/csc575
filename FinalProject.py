@@ -8,6 +8,11 @@ import errno
 import time
 #regular expressions
 import re
+import itertools
+import numpy as np
+import ast
+import pickle
+
 
 class Cluster:
     def __init__(self,user):
@@ -95,23 +100,52 @@ def cleanFile(sourcePath,destPath):
         print('Source File Does not exist')
         raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), sourcePath)  
 
+def literal_return(val):
+    try:
+        return ast.literal_eval(val)
+    except (ValueError, SyntaxError) as e:
+        return val
 
 
-def readFileCreateTFIDF(sourcePath,delim):
-    start_time = time.time()
-    users = []
-    tfidf=TfidfVectorizer()
+def readFileCreateTFIDF(sourcePath,tokenPath,delim):
+    if not path.exists(tokenPath):
+        start_time = time.time()
+        users = []
+        tfidf=TfidfVectorizer()
     
-    totalvocab_stemmed = []
-    totalvocab_tokenized = []
+        totalvocab_stemmed = []
+        totalvocab_tokenized = []
 
-    df = pd.read_csv(sourcePath,encoding='ISO-8859–1',names = ['user','text'])  
-    df['stems_tokens'] = df['text'].apply(tokenize_and_stem)
-    df['tokens'] = df['text'].apply(tokenize)
-    print("--- %s minutes ---" % ((time.time() - start_time)/60))
-    df.to_csv('./data/tokens.csv',index=False)
+        df = pd.read_csv(sourcePath,encoding='ISO-8859–1',names = ['user','text'])  
+        df['stems_tokens'] = df['text'].apply(tokenize_and_stem)
+        df['tokens'] = df['text'].apply(tokenize)
+        print("--- %s minutes ---" % ((time.time() - start_time)/60))
+        df.to_csv(tokenPath,index=False)
+    else:
+        all_vocab = []
+        df = pd.read_csv(tokenPath)
+        #df['tokens'] = df['tokens'].apply(literal_return)
+        #df['stems_tokens'] = df['stems_tokens'].apply(literal_return)
+        #all_vocab = np.concatenate(df['tokens'])
+        #all_stemed_vocab = np.concatenate(df['stems_tokens'])
+        #print(all_vocab)
+        #print(all_stemed_vocab)
+
+        start_time = time.time()
+        #define vectorizer parameters
+        tfidf_vectorizer = TfidfVectorizer(max_df=0.8, max_features=200000,
+                                         min_df=0.2, stop_words='english',
+                                         use_idf=True, tokenizer=tokenize_and_stem, ngram_range=(1,3))
+
+        tfidf_matrix = tfidf_vectorizer.fit_transform(df['text']) #fit the vectorizer to synopses
+        print("--- %s minutes ---" % ((time.time() - start_time)/60))
+        
+        pickle.dump(tfidf, open("tfidf_matrix.pickle", "wb"))
+     
 delim = '^~'
 sourcePath = './data/raw_data.csv'
 destPath = './data/tweets.csv'
+tokenPath = './data/tokens.csv'
 cleanFile(sourcePath,destPath)
-readFileCreateTFIDF(destPath,delim)
+readFileCreateTFIDF(destPath,tokenPath,delim)
+
