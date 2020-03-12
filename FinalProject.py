@@ -148,6 +148,8 @@ def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,delim):
         print('tfidf_matrix pickle exists - moving on')
 
 def kmeans(tfidf_matrix,k):
+    start_time = time.time()
+
     num_clusters = k
 
     km = KMeans(n_clusters=num_clusters)
@@ -164,8 +166,8 @@ def kmeans(tfidf_matrix,k):
 
     km = joblib.load('doc_cluster.pkl')
     clusters = km.labels_.tolist()
+    print("--- %s minutes ---" % ((time.time() - start_time)/60))
     print(clusters)
-
          
 delim = '^~'
 sourcePath = './data/raw_data.csv'
