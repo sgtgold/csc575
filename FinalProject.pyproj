@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>77b852eb-b3cf-4a47-ab9b-73062a010c8f</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Preprocessing.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,19 +21,23 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Client.py">
+    <Compile Include="main.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Clustering.py">
+    <Compile Include="packages\clustering.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Preprocessing.py" />
-    <Compile Include="HierarchicalClustering.py">
+    <Compile Include="packages\data.py" />
+    <Compile Include="packages\hierarchical.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="packages\__init__.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="data\" />
+    <Folder Include="packages\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="data\raw_data.csv" />

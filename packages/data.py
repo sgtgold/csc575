@@ -1,4 +1,5 @@
-#TODO: create requirments.txt
+#!/usr/bin/env python3
+
 import pandas as pd
 import os.path
 import nltk
@@ -14,7 +15,6 @@ from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 #Exporting Clusters
-from sklearn.externals import joblib
 
 #region Preprocessing
 class User:
@@ -134,39 +134,21 @@ def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,delim):
 
 def kmeans(tfidf_matrix,k):
     start_time = time.time()
-
     num_clusters = k
-
     km = KMeans(n_clusters=num_clusters)
-
     km.fit(tfidf_matrix)
-
     clusters = km.labels_.tolist()
-
-
-    #uncomment the below to save your model 
-    #since I've already run my model I am loading from the pickle
-
-    joblib.dump(km,  'doc_cluster.pkl')
-
-    km = joblib.load('doc_cluster.pkl')
+    pickle.dump(km,  './data/doc_cluster.pickle')
+    km = pickle.load('./data/doc_cluster.pickle',"rb")
     clusters = km.labels_.tolist()
     print("--- %s minutes ---" % ((time.time() - start_time)/60))
     print(clusters)
 
 def readPickle(picklePath):
     pickle_in = open(picklePath,"rb")
-    tfidf_matrix = pickle.load(pickle_in)
-    return tfidf_matrix
-    
-delim = '^~'
-sourcePath = './data/raw_data.csv'
-destPath = './data/tweets.csv'
-tokenPath = './data/tokens.csv'
-picklePath = './data/tfidf_matrix.pickle'
-cleanFile(sourcePath,destPath)
-readFileCreateTFIDF(destPath,tokenPath,picklePath,delim)
-kmeans(tfidf_matrix,5)
+    obj = pickle.load(pickle_in)
+    return obj
+
 
 #endregion 
 
