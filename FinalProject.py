@@ -1,38 +1,23 @@
+#TODO: create requirments.txt
 import pandas as pd
 import os.path
 import nltk
-from os import path
-from nltk.stem.snowball import SnowballStemmer
-from sklearn.feature_extraction.text import TfidfVectorizer
+import numpy as np
 import errno
 import time
 #regular expressions
 import re
-import itertools
-import numpy as np
 import ast
 import pickle
+from os import path
+from nltk.stem.snowball import SnowballStemmer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
+#Exporting Clusters
 from sklearn.externals import joblib
 
-class Cluster:
-    def __init__(self,user):
-        self.users = []
-        self.clusters = []
-        self.centroid = []
-
-    def add_cluster(self,cluster,users ):
-        self.clusters.append(cluster)
-        self.users.append(users)
-        self.centroid = np.mean(self.clusters, axis=0)
-
-    def __str__(self):
-        line = self.name + ':'
-        line += str(self.docs)
-        return line
-
+#region Preprocessing
 class User:
-
     def __init__(self,name):
         self.name = name
         self.tweets = ''
@@ -168,7 +153,12 @@ def kmeans(tfidf_matrix,k):
     clusters = km.labels_.tolist()
     print("--- %s minutes ---" % ((time.time() - start_time)/60))
     print(clusters)
-         
+
+def readPickle(picklePath):
+    pickle_in = open(picklePath,"rb")
+    tfidf_matrix = pickle.load(pickle_in)
+    return tfidf_matrix
+    
 delim = '^~'
 sourcePath = './data/raw_data.csv'
 destPath = './data/tweets.csv'
@@ -176,7 +166,11 @@ tokenPath = './data/tokens.csv'
 picklePath = './data/tfidf_matrix.pickle'
 cleanFile(sourcePath,destPath)
 readFileCreateTFIDF(destPath,tokenPath,picklePath,delim)
-pickle_in = open(picklePath,"rb")
-tfidf_matrix = pickle.load(pickle_in)
 kmeans(tfidf_matrix,5)
+
+#endregion 
+
+#region Clustering
+
+#endregion
 
