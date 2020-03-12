@@ -132,14 +132,14 @@ def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,delim):
     else:
         print('tfidf_matrix pickle exists - moving on')
 
-def kmeans(tfidf_matrix,k):
+def kmeans(tfidf_matrix,picklePath,k):
     start_time = time.time()
     num_clusters = k
     km = KMeans(n_clusters=num_clusters)
     km.fit(tfidf_matrix)
     clusters = km.labels_.tolist()
-    pickle.dump(km,  './data/doc_cluster.pickle')
-    km = pickle.load('./data/doc_cluster.pickle',"rb")
+    pickle.dump(km, open(picklePath, "wb"))
+    km = readPickle(picklePath)
     clusters = km.labels_.tolist()
     print("--- %s minutes ---" % ((time.time() - start_time)/60))
     print(clusters)
