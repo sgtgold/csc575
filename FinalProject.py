@@ -12,7 +12,8 @@ import itertools
 import numpy as np
 import ast
 import pickle
-
+from sklearn.cluster import KMeans
+from sklearn.externals import joblib
 
 class Cluster:
     def __init__(self,user):
@@ -145,6 +146,26 @@ def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,delim):
             pickle.dump(tfidf_matrix, open(picklePath, "wb"))
     else:
         print('tfidf_matrix pickle exists - moving on')
+
+def kmeans(tfidf_matrix,k):
+    num_clusters = k
+
+    km = KMeans(n_clusters=num_clusters)
+
+    km.fit(tfidf_matrix)
+
+    clusters = km.labels_.tolist()
+
+
+    #uncomment the below to save your model 
+    #since I've already run my model I am loading from the pickle
+
+    joblib.dump(km,  'doc_cluster.pkl')
+
+    km = joblib.load('doc_cluster.pkl')
+    clusters = km.labels_.tolist()
+    print(clusters)
+
          
 delim = '^~'
 sourcePath = './data/raw_data.csv'
@@ -155,5 +176,5 @@ cleanFile(sourcePath,destPath)
 readFileCreateTFIDF(destPath,tokenPath,picklePath,delim)
 pickle_in = open(picklePath,"rb")
 tfidf_matrix = pickle.load(pickle_in)
-print(tfidf_matrix.shape)
+kmeans(tfidf_matrix,5)
 
