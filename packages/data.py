@@ -13,7 +13,10 @@ import pickle
 from os import path
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.cluster import KMeans
+from sklearn.decomposition import TruncatedSVD
+from sklearn.preprocessing import Normalizer
+from sklearn.pipeline import make_pipeline
+
 #Exporting Clusters
 
 #region Preprocessing
@@ -132,24 +135,26 @@ def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,delim):
     else:
         print('tfidf_matrix pickle exists - moving on')
 
-def kmeans(tfidf_matrix,picklePath,k):
-    start_time = time.time()
-    num_clusters = k
-    km = KMeans(n_clusters=num_clusters)
-    km.fit(tfidf_matrix)
-    clusters = km.labels_.tolist()
-    pickle.dump(km, open(picklePath, "wb"))
-    km = readPickle(picklePath)
-    clusters = km.labels_.tolist()
-    print("--- %s minutes ---" % ((time.time() - start_time)/60))
-    print(clusters)
 
 def readPickle(picklePath):
     pickle_in = open(picklePath,"rb")
     obj = pickle.load(pickle_in)
     return obj
 
-
+def ApplySVD(tfidf_matrix):
+    print("Performing dimensionality reduction using LSA")
+    # Vectorizer results are normalized, which makes KMeans behave as
+    # spherical k-means for better results. Since LSA/SVD results are
+    # not normalized, we have to redo the normalization.
+    #Number of Documents we have
+    x,y = tfidf_matrix.shape
+    svd = TruncatedSVD(y-1)
+    normalizer = Normalizer(copy=False)
+    lsa = make_pipeline(svd, normalizer)
+    M = lsa.fit_transform(tfidf_matrix)
+    explained_variance = svd.explained_variance_ratio_.sum()
+    print("Explained variance of the SVD step: {}%".format(int(explained_variance * 100)))
+    return M
 #endregion 
 
 #region Clustering
