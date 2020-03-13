@@ -141,14 +141,14 @@ def readPickle(picklePath):
     obj = pickle.load(pickle_in)
     return obj
 
-def ApplySVD(tfidf_matrix):
+def ApplySVD(tfidf_matrix,n_features):
     print("Performing dimensionality reduction using LSA")
     # Vectorizer results are normalized, which makes KMeans behave as
     # spherical k-means for better results. Since LSA/SVD results are
     # not normalized, we have to redo the normalization.
     #Number of Documents we have
     x,y = tfidf_matrix.shape
-    svd = TruncatedSVD(y-1)
+    svd = TruncatedSVD(n_features)
     normalizer = Normalizer(copy=False)
     lsa = make_pipeline(svd, normalizer)
     M = lsa.fit_transform(tfidf_matrix)
