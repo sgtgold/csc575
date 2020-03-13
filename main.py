@@ -18,7 +18,7 @@ data.cleanFile(sourcePath,destPath)
 data.readFileCreateTFIDF(destPath,tokenPath,picklePath,delim)
 tfidf_matrix = np.matrix(data.readPickle(picklePath).toarray())
 #clustering.kmeans(tfidf_matrix,kPicklePath,5)
-svd = data.ApplySVD(tfidf_matrix.T,1000)
+svd = data.ApplySVD(tfidf_matrix,125)
 kPicklePath = './data/kmeans_svd.pickle'
 Clustering.kmeans(svd,kPicklePath,5)
 
