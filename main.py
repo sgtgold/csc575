@@ -4,6 +4,7 @@ from packages import data
 from packages import clustering
 from packages import hierarchical
 import numpy as np
+import pandas as pd
 
 delim = '^~'
 sourcePath = './data/raw_data.csv'
