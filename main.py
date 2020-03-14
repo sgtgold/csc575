@@ -2,7 +2,7 @@
 #TODO: create requirments.txt
 #TODO: create readme
 from packages import data
-from packages import Clustering
+from packages import clustering
 import numpy as np
 
 
