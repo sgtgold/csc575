@@ -155,7 +155,7 @@ def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,vectorPath,featurePath,d
             tfidf_vectorizer = TfidfVectorizer(tokenizer=tokenize_and_stem)
             df = pd.read_csv(tokenPath,encoding='UTF-8')
             print(df.head())
-            all_text = df[:10000]['tokens'].apply(''.join)
+            all_text = df['tokens'].apply(''.join)
             #fit the vectorizer with the data
             tfidf_matrix = tfidf_vectorizer.fit_transform(all_text) 
             #print(tfidf_vectorizer.get_feature_names())
