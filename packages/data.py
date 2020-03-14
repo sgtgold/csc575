@@ -149,7 +149,7 @@ def extractTopics(tfidf_matrix,nmfPickle,num_topics):
 #Prints the 10 most important topics for consumption
 def display_topics(model, feature_names, num_topics):
     for topic_idx, topic in enumerate(model.components_):
-        print("Topic %d:" % (topic_idx),topic)
+        #print("Topic %d:" % (topic_idx),topic)
         print(" ".join([feature_names[i]
                         for i in topic.argsort()[:-num_topics - 1:-1]]))
 
