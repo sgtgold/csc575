@@ -8,6 +8,20 @@ from time import time
 
 def cluster(matrix, distance_measure, linkage_type):
 
+   """
+    Agglomerative Clustering
+
+    This performs 4 various ways of hierarchical cluster
+    1. ward
+    2. average
+    3. complete
+    4. single
+
+    After performing fit_predit this will display how long the algorithm took.
+    This will also show a scatter plot per each algorithm.
+
+    """
+
     for linkage in ('ward', 'average', 'complete', 'single'):
         cluster = AgglomerativeClustering(linkage=linkage, n_clusters=3)
         t0 = time()
