@@ -2,7 +2,9 @@
 #TODO: create readme
 from packages import data
 from packages import clustering
+from packages import hierarchical
 import numpy as np
+import pandas as pd
 
 delim = '^~'
 sourcePath = './data/raw_data.csv'
@@ -25,5 +27,5 @@ model = data.extractTopics(tfidf_matrix,nmfPath,num_topics)
 data.display_topics(model,feat_array,num_topics)
 #kPicklePath = './data/kmeans_svd.pickle'
 #clustering.kmeans(svd,kPicklePath,5)
-
+#hierarchical.cluster(pd.DataFrame(pd.read_pickle(svdPicklePath)).T)
 
