@@ -1,15 +1,11 @@
 #!/usr/bin/env python3
-#TODO: create requirments.txt
 #TODO: create readme
 from packages import data
 from packages import clustering
 import numpy as np
 
-
-#from packages import clustering
 delim = '^~'
 sourcePath = './data/raw_data.csv'
-destPath = './data/tweets.csv'
 tokenPath = './data/tokens.csv'
 nmfPath = './data/nmf.pickle'
 tfidfPath = './data/tfidf_matrix.pickle'
@@ -19,10 +15,10 @@ featurePickelPath = './data/features.pickle'
 svdPicklePath = './data/svd.pickle'
 num_topics = 10
 
-data.cleanFile(sourcePath,destPath,delim)
-data.readFileCreateTFIDF(destPath,tokenPath,tfidfPath,vectorPath,featurePickelPath,delim)
+data.cleanFile(sourcePath,tokenPath,delim)
+data.readFileCreateTFIDF(tokenPath,tfidfPath,vectorPath,featurePickelPath,delim)
 tfidf_matrix = data.readPickle(tfidfPath)
-M,svd = data.ApplySVD(tfidf_matrix,7)
+svd = data.LoadSVD(tfidf_matrix,svdPicklePath,1000)
 feat_array = data.readPickle(featurePickelPath)
 model = data.extractTopics(tfidf_matrix,nmfPath,num_topics)
 data.display_topics(model,feat_array,num_topics)

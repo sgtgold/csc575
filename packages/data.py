@@ -17,8 +17,8 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 #Libraries used for Dimension reduction and topic detection respectively
 from sklearn.decomposition import TruncatedSVD,NMF
-#Normalizing for SVD
 from sklearn.preprocessing import Normalizer
+#Normalizing for SVD
 from sklearn.pipeline import make_pipeline
 np.set_printoptions(threshold=sys.maxsize)
 
@@ -153,7 +153,7 @@ def display_topics(model, feature_names, num_topics):
 
 #Reads in our Clean Text file see cleanFile above for sourceFile
 #Creates TF-IDF matrix and vectorizer, also a feature list and saves them as a pickles for later use
-def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,vectorPath,featurePath,delim):
+def readFileCreateTFIDF(tokenPath,picklePath,vectorPath,featurePath,delim):
     #We skip this if the pickles exist as this is a lengthy process
     if not path.exists(picklePath):
         #We need this file to exist
@@ -185,17 +185,24 @@ def readPickle(picklePath):
     obj = pickle.load(pickle_in)
     return obj
 
-#SVD decomposition to help us reduce dimensions and LSA - Latent semantic analysis
+#SVD decomposition to help us reduce dimensions
 #This can help us analyze the content of the tweets easier
-def ApplySVD(tfidf_matrix,n_features):
-    print("Performing dimensionality reduction using LSA")
-    
-    svd = TruncatedSVD(n_features)
-    # We normalize for optimal input to LSA
-    normalizer = Normalizer(copy=False)
-    lsa = make_pipeline(svd, normalizer)
-    M = lsa.fit_transform(tfidf_matrix)
-    explained_variance = svd.explained_variance_ratio_.sum()
-    print("Explained variance of the SVD step: {}%".format(int(explained_variance * 100)))
-    return M,svd
+#Returns the SVD onject
+def LoadSVD(tfidf_matrix,SVDpicklePath,n_features):
+    if not path.exists(SVDpicklePath):
+        print("Performing dimensionality reduction using SVD and LSA")
+        svd = TruncatedSVD(n_features)
+        # We normalize for optimal input to LSA
+        normalizer = Normalizer(copy=False)
+        lsa = make_pipeline(svd, normalizer)
+        M = lsa.fit_transform(tfidf_matrix)
+        explained_variance = svd.explained_variance_ratio_.sum()
+        print("Explained variance of the SVD step: {}%".format(int(explained_variance * 100)))
+        pickle.dump(svd,open(SVDpicklePath,"wb"))
+    else:
+        print('Loading SVD from Pickle')
+        svd = readPickle(SVDpicklePath)
+        explained_variance = svd.explained_variance_ratio_.sum()
+        print("Explained variance of the SVD step: {}%".format(int(explained_variance * 100)))
+    return svd
 
