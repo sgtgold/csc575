@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>FinalProject</Name>
     <RootNamespace>FinalProject</RootNamespace>
-    <InterpreterId>Global|PythonCore|3.7</InterpreterId>
+    <InterpreterId>CondaEnv|CondaEnv|vs-anaconda-env</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,6 +46,7 @@
     <Content Include="requirements.txt" />
   </ItemGroup>
   <ItemGroup>
+    <InterpreterReference Include="CondaEnv|CondaEnv|vs-anaconda-env" />
     <InterpreterReference Include="Global|PythonCore|3.7" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
