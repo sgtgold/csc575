@@ -20,6 +20,7 @@ from sklearn.pipeline import make_pipeline
 np.set_printoptions(threshold=sys.maxsize)
 nltk.download('stopwords')  
 from nltk.corpus import stopwords 
+import string
 #Exporting Clusters
 
 #region Preprocessing
@@ -41,31 +42,36 @@ class User:
         line = self.name + ',"' + self.tweets +'"'
         return line
 
-def tokenize_and_stem(text):
-    #tokenize by sentence
+def cleanTweets(text):
     processed_tweets = []
-    #Keep only the words - no puncuation
     for token in text.split(','):
         token = token.strip().lower()
+        token = ''.join([i for i in token if not i.isdigit()])
+        printable = set(string.printable)
+        filter(lambda x: x in printable, token)
         processed_tweet = re.sub(r'\W', '', token)
- 
-        # remove all single characters and limit the size to greater than 3 characters
-        processed_tweet = re.sub(r'\s+[a-zA-Z]\s+', ' ', processed_tweet)
- 
+    
+        # remove all single characters
+        processed_tweet = re.sub(r'\s+[a-z]\s+', ' ', processed_tweet)
+    
         # Remove single characters from the start
-        processed_tweet = re.sub(r'\^[a-zA-Z]\s+', ' ', processed_tweet) 
- 
+        processed_tweet = re.sub(r'\^[a-z]\s+', ' ', processed_tweet) 
+    
         # Substituting multiple spaces with single space
         processed_tweet= re.sub(r'\s+', ' ', processed_tweet, flags=re.I)
- 
+    
         # Removing prefixed 'b'
         processed_tweet = re.sub(r'^b\s+', '', processed_tweet)
- 
+    
         # Converting to Lowercase
         processed_tweet = processed_tweet
         if(len(processed_tweet) > 3 and processed_tweet not in nltk.corpus.stopwords.words('english')):
             # Remove all the special characters
             processed_tweets.append(processed_tweet)
+    return processed_tweets
+
+def tokenize_and_stem(text):
+    processed_tweets = cleanTweets(text)
     stemmer = SnowballStemmer("english")
     stems = [stemmer.stem(t) for t in processed_tweets]
     return stems
@@ -73,29 +79,8 @@ def tokenize_and_stem(text):
 def tokenize(text):
     #tokenize by sentence
     tokens = text.split(' ')
-    processed_tweets = []
     #Keep only the words - no puncuation
-    for token in text.split(','):
-        token = token.strip().lower()
-        processed_tweet = re.sub(r'\W', '', token)
- 
-        # remove all single characters and limit the size to greater than 3 characters
-        processed_tweet = re.sub(r'\s+[a-zA-Z]\s+', ' ', processed_tweet)
- 
-        # Remove single characters from the start
-        processed_tweet = re.sub(r'\^[a-zA-Z]\s+', ' ', processed_tweet) 
- 
-        # Substituting multiple spaces with single space
-        processed_tweet= re.sub(r'\s+', ' ', processed_tweet, flags=re.I)
- 
-        # Removing prefixed 'b'
-        processed_tweet = re.sub(r'^b\s+', '', processed_tweet)
- 
-        # Converting to Lowercase
-        processed_tweet = processed_tweet
-        if(len(processed_tweet) > 3 and processed_tweet not in nltk.corpus.stopwords.words('english')):
-            # Remove all the special characters
-            processed_tweets.append(processed_tweet)
+    processed_tweets = cleanTweets(text)
     return processed_tweets
 
 
@@ -173,7 +158,7 @@ def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,vectorPath,featurePath,d
             all_text = df[:10000]['tokens'].apply(''.join)
             #fit the vectorizer with the data
             tfidf_matrix = tfidf_vectorizer.fit_transform(all_text) 
-            print(tfidf_vectorizer.get_feature_names())
+            #print(tfidf_vectorizer.get_feature_names())
             pickle.dump(tfidf_vectorizer,open(vectorPath,"wb"))
             pickle.dump(tfidf_vectorizer.get_feature_names(),open(featurePath,"wb"))
             pickle.dump(tfidf_matrix, open(picklePath, "wb"))
