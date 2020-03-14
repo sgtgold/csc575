@@ -18,9 +18,11 @@ num_topics = 10
 data.cleanFile(sourcePath,tokenPath,delim)
 data.readFileCreateTFIDF(tokenPath,tfidfPath,vectorPath,featurePickelPath,delim)
 tfidf_matrix = data.readPickle(tfidfPath)
-svd = data.LoadSVD(tfidf_matrix,svdPicklePath,1000)
 feat_array = data.readPickle(featurePickelPath)
-model = data.extractTopics(tfidf_matrix,nmfPath,num_topics)
-data.display_topics(model,feat_array,num_topics)
+svd = data.LoadSVD(tfidf_matrix,feat_array,svdPicklePath,40)
+#model = data.extractTopics(tfidf_matrix,nmfPath,num_topics)
+#data.display_topics(model,feat_array,num_topics)
 #kPicklePath = './data/kmeans_svd.pickle'
-#Clustering.kmeans(svd,kPicklePath,5)
+clustering.kmeans(svd,kPicklePath,5)
+
+

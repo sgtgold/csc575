@@ -6,6 +6,7 @@ from packages import data
 
 def kmeans(tfidf_matrix,picklePath,k):
     start_time = time.time()
+    print(start_time)
     num_clusters = k
     km = KMeans(n_clusters=num_clusters)
     km.fit(tfidf_matrix)

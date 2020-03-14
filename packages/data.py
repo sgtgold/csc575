@@ -16,10 +16,12 @@ import pandas as pd
 #Scikit learn libraries which help 
 from sklearn.feature_extraction.text import TfidfVectorizer
 #Libraries used for Dimension reduction and topic detection respectively
-from sklearn.decomposition import TruncatedSVD,NMF
+from sklearn.decomposition import NMF
 from sklearn.preprocessing import Normalizer
 #Normalizing for SVD
 from sklearn.pipeline import make_pipeline
+#SVD
+from scipy.sparse.linalg import svds
 np.set_printoptions(threshold=sys.maxsize)
 
 #NLTK library for helping with text preproccessing
@@ -185,24 +187,28 @@ def readPickle(picklePath):
     obj = pickle.load(pickle_in)
     return obj
 
+def showSVDPlot(tfidf_matrix):
+    u, s, v_trans = svds(tfidf_matrix, k=100)
+    import matplotlib
+    import numpy as np
+    import matplotlib.pyplot as plt
+    #matplotlib inline
+    plt.plot(s[::-1])
+    plt.xlabel("Singular value number")
+    plt.ylabel("Singular value")
+    plt.show()
+
 #SVD decomposition to help us reduce dimensions
 #This can help us analyze the content of the tweets easier
 #Returns the SVD onject
-def LoadSVD(tfidf_matrix,SVDpicklePath,n_features):
+def LoadSVD(tfidf_matrix,features,SVDpicklePath,n_features):
+    #We skip this if the pickles exist as this is a lengthy process
     if not path.exists(SVDpicklePath):
-        print("Performing dimensionality reduction using SVD and LSA")
-        svd = TruncatedSVD(n_features)
-        # We normalize for optimal input to LSA
-        normalizer = Normalizer(copy=False)
-        lsa = make_pipeline(svd, normalizer)
-        M = lsa.fit_transform(tfidf_matrix)
-        explained_variance = svd.explained_variance_ratio_.sum()
-        print("Explained variance of the SVD step: {}%".format(int(explained_variance * 100)))
-        pickle.dump(svd,open(SVDpicklePath,"wb"))
+        #We need this file to exist
+        words_compressed, _, docs_compressed = svds(tfidf_matrix, k=n_features)
+        docs_compressed = docs_compressed.transpose()
+        pickle.dump(words_compressed, open(SVDpicklePath, "wb"))
     else:
-        print('Loading SVD from Pickle')
-        svd = readPickle(SVDpicklePath)
-        explained_variance = svd.explained_variance_ratio_.sum()
-        print("Explained variance of the SVD step: {}%".format(int(explained_variance * 100)))
-    return svd
+        words_compressed = readPickle(SVDpicklePath)
+    return words_compressed
 
