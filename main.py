@@ -19,7 +19,7 @@ featurePickelPath = './data/features.pickle'
 svdPicklePath = './data/svd.pickle'
 num_topics = 10
 
-data.cleanFile(sourcePath,destPath)
+data.cleanFile(sourcePath,destPath,delim)
 data.readFileCreateTFIDF(destPath,tokenPath,tfidfPath,vectorPath,featurePickelPath,delim)
 tfidf_matrix = data.readPickle(tfidfPath)
 M,svd = data.ApplySVD(tfidf_matrix,7)
