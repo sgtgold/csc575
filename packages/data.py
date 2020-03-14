@@ -10,12 +10,14 @@ import time
 import re
 import ast
 import pickle
+import sys
 from os import path
 from nltk.stem.snowball import SnowballStemmer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.decomposition import TruncatedSVD
+from sklearn.decomposition import TruncatedSVD,NMF, LatentDirichletAllocation
 from sklearn.preprocessing import Normalizer
 from sklearn.pipeline import make_pipeline
+np.set_printoptions(threshold=sys.maxsize)
 
 #Exporting Clusters
 
@@ -95,14 +97,29 @@ def literal_return(val):
     except (ValueError, SyntaxError) as e:
         return val
 
+def extractTopics(tfidf_matrix,nmfPickle,num_topics):
+    if not path.exists(nmfPickle):    
+        model = NMF(n_components=num_topics, init='random', random_state=0)
+        W = model.fit_transform(tfidf_matrix)
+        H = model.components_# Run NMF
+        pickle.dump(model, open(nmfPickle, "wb"))    
+    else:
+        print('NMF pickle exists. Moving on')
+        model = readPickle(nmfPickle)
+    return model
 
-def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,delim):
+def display_topics(model, feature_names, num_topics):
+    for topic_idx, topic in enumerate(model.components_):
+        print("Topic %d:" % (topic_idx),topic)
+        print(" ".join([feature_names[i]
+                        for i in topic.argsort()[:-num_topics - 1:-1]]))
+
+def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,vectorPath,featurePath,delim):
     if not path.exists(picklePath):
         if not path.exists(tokenPath):
             start_time = time.time()
             users = []
             tfidf=TfidfVectorizer()
-    
             totalvocab_stemmed = []
             totalvocab_tokenized = []
 
@@ -112,28 +129,21 @@ def readFileCreateTFIDF(sourcePath,tokenPath,picklePath,delim):
             print("--- %s minutes ---" % ((time.time() - start_time)/60))
             df.to_csv(tokenPath,index=False)
         else:
-            all_vocab = []
-            df = pd.read_csv(tokenPath)
-            #df['tokens'] = df['tokens'].apply(literal_return)
-            #df['stems_tokens'] = df['stems_tokens'].apply(literal_return)
-            #all_vocab = np.concatenate(df['tokens'])
-            #all_stemed_vocab = np.concatenate(df['stems_tokens'])
-            #print(all_vocab)
-            all_text = df['text'].apply(' '.join)
-            #print(all_stemed_vocab)
-
             start_time = time.time()
             #define vectorizer parameters
             tfidf_vectorizer = TfidfVectorizer(max_df=0.8, max_features=200000,
                                              min_df=0.2, stop_words='english',
                                              use_idf=True, tokenizer=tokenize_and_stem, ngram_range=(1,3))
+            df = pd.read_csv(tokenPath)
+            all_text = df['text'].apply(' '.join)
+            #fit the vectorizer with the data
+            tfidf_matrix = tfidf_vectorizer.fit_transform(all_text) 
 
-            tfidf_matrix = tfidf_vectorizer.fit_transform(all_text) #fit the vectorizer to synopses
-
-        
+            pickle.dump(tfidf_vectorizer,open(vectorPath,"wb"))
+            pickle.dump(tfidf_vectorizer.get_feature_names(),open(featurePath,"wb"))
             pickle.dump(tfidf_matrix, open(picklePath, "wb"))
     else:
-        print('tfidf_matrix pickle exists - moving on')
+        print('tfidf_matrix pickle exists. Moving on')
 
 
 def readPickle(picklePath):
@@ -154,7 +164,7 @@ def ApplySVD(tfidf_matrix,n_features):
     M = lsa.fit_transform(tfidf_matrix)
     explained_variance = svd.explained_variance_ratio_.sum()
     print("Explained variance of the SVD step: {}%".format(int(explained_variance * 100)))
-    return M
+    return M,svd
 #endregion 
 
 #region Clustering
