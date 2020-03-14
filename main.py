@@ -4,8 +4,7 @@
 from packages import data
 from packages import Clustering
 import numpy as np
-import pickle
-from sklearn.feature_extraction.text import TfidfVectorizer
+
 
 #from packages import clustering
 delim = '^~'
