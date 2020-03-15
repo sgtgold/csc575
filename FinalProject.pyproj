@@ -41,7 +41,10 @@
     <Folder Include="packages\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="data\nmf.pickle" />
     <Content Include="data\raw_data.csv" />
+    <Content Include="data\tfidf_matrix.pickle" />
+    <Content Include="data\tfidf_matrix_small.pickle" />
     <Content Include="data\tweets.csv" />
     <Content Include="requirements.txt" />
   </ItemGroup>
