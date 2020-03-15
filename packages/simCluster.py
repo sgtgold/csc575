@@ -31,6 +31,7 @@ class Cluster:
 def singlepass(svd, threshold=0.5, hard = 1):
     
     start_time = time.time()
+    print ("\n---Starting Single pass clustering---", time.asctime( time.localtime(start_time)))
     rows,cols = svd.shape
     clusters = []
    
@@ -64,11 +65,19 @@ def singlepass(svd, threshold=0.5, hard = 1):
             cc = Cluster('C'+str(c))
             cc.add_vector(currRow,currDoc)
             clusters.append(cc)  
+    
+    print("--- Complete ---", time.asctime( time.localtime(time.time())))
     cSize=[]
     for cl in clusters:
         cSize.append(len(np.array(cl.docs)))
     lc =max(cSize)
-    lcc = 'C'+str(lc)
-    print("Number of Clusters:\t {:d}".format(c))
+    print("\n\nNumber of Clusters:\t {:d}".format(c))
     print("Largest cluster is with {:d} documents".format(lc))
-    #print ("Larger Cluster {:s}".format(clusters[lc]))
+   
+    cSize.sort()
+    print('Top 5 clusters with higest document')
+    for i in range(5):
+         cx = clusters[i]
+         print(cx)
+         #print(cx.centroid)
+
