@@ -26,4 +26,4 @@ def kmeans(tfidf_matrix,picklePath,k):
     # Compute on the upper (or lower) triangular corner of the distance matrix:
 
     print("--- %s minutes ---" % ((time.time() - start_time)/60))
-    print(clusters)
+    #print(clusters)

@@ -36,9 +36,9 @@ feat_array = data.readPickle(featurePickelPath)
 #model = data.extractTopics(tfidf_matrix,nmfPath,num_topics)
 #data.display_topics(model,feat_array,num_topics)
 svd = data.readPickle(svdPicklePath)
-clustering.kmeans(svd[:1000],kPicklePath,5)
+clustering.kmeans(svd[:10000],kPicklePath,5)
 #Sample of 10000 document SVDs
-simCluster.singlepass(svd[:100],0.5,0)
+simCluster.singlepass(svd[:10000],0.5,0)
 #simCluster.singlepass(svd,0.5,0)
 
 print("--- {:d} sec ---".format(round(time.time() - start_time),0))
