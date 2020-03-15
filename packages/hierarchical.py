@@ -20,7 +20,7 @@ from time import time
 
 """
 
-def cluster(matrix, distance_measure, linkage_type):
+def cluster(matrix):
 
     for linkage in ('ward', 'average', 'complete', 'single'):
         cluster = AgglomerativeClustering(linkage=linkage, n_clusters=3)
