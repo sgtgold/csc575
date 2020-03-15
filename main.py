@@ -5,16 +5,20 @@ from packages import clustering
 from packages import hierarchical
 import numpy as np
 import pandas as pd
-
+from packages import simCluster
 delim = '^~'
 sourcePath = './data/raw_data.csv'
 tokenPath = './data/tokens.csv'
 nmfPath = './data/nmf.pickle'
 tfidfPath = './data/tfidf_matrix.pickle'
+tfidfPath = './data/tfidf_matrix_small.pickle'
 vectorPath = './data/tfidf_vector.pickle'
 kPicklePath = './data/kmeans.pickle'
 featurePickelPath = './data/features.pickle'
 svdPicklePath = './data/svd.pickle'
+#kPicklePath = './data/kmeans_svd.pickle'
+
+simPicklePath = './data/sim.pickle'
 num_topics = 10
 
 data.cleanFile(sourcePath,tokenPath,delim)
@@ -28,4 +32,7 @@ data.display_topics(model,feat_array,num_topics)
 #kPicklePath = './data/kmeans_svd.pickle'
 #clustering.kmeans(svd,kPicklePath,5)
 #hierarchical.cluster(pd.DataFrame(pd.read_pickle(svdPicklePath)).sample(n=25000))
+
+simCluster.singlepass(svd[:10000],0.5,0)
+#simCluster.singlepass(svd,0.5,0)
 

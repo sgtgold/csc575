@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
+    "\\data",
     "\\packages"
   ],
-  "SelectedNode": "\\packages\\data.py",
+  "SelectedNode": "\\packages\\clustering.py",
   "PreviewInSolutionExplorer": false
 }
