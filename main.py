@@ -21,6 +21,13 @@ svdPicklePath = './data/svd.pickle'
 simPicklePath = './data/sim.pickle'
 num_topics = 10
 
+low_memory = 10000
+medium_memory = 25000
+high_memory = 50000
+
+hierarchical_clustering_memory = medium_memory
+hierarchical_clustering_number_clusters = 5
+
 data.cleanFile(sourcePath,tokenPath,delim)
 data.readFileCreateTFIDF(tokenPath,tfidfPath,vectorPath,featurePickelPath,delim)
 tfidf_matrix = data.readPickle(tfidfPath)
@@ -31,7 +38,6 @@ model = data.extractTopics(tfidf_matrix,nmfPath,num_topics)
 data.display_topics(model,feat_array,num_topics)
 kPicklePath = './data/kmeans_svd.pickle'
 clustering.kmeans(svd,kPicklePath,5)
-hierarchical.cluster(pd.DataFrame(pd.read_pickle(svdPicklePath)).sample(n=50000))
+hierarchical.cluster(pd.DataFrame(pd.read_pickle(svdPicklePath)).sample(n=hierarchical_clustering_memory), hierarchical_clustering_number_clusters)
 #simCluster.singlepass(svd[:10000],0.5,0)
 simCluster.singlepass(svd,0.5,0)
-

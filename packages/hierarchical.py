@@ -20,13 +20,29 @@ from time import time
 
 """
 
-def cluster(matrix):
+def cluster(matrix, number_clusters):
 
     for linkage in ('ward', 'average', 'complete', 'single'):
-        cluster = AgglomerativeClustering(linkage=linkage, n_clusters=3)
+        print('Hierarchical clustering - ', linkage)
+        cluster = AgglomerativeClustering(linkage=linkage, n_clusters=number_clusters)
         t0 = time()
         cluster.fit_predict(matrix)
         plt.title(linkage)
         plt.scatter(matrix.iloc[:,0],matrix.iloc[:,1], c=cluster.labels_, cmap='rainbow')
-        print("%s :\t%.2fs" % (linkage, time() - t0))
+        print("End hierarchical clustering for %s :\t%.2fs" % (linkage, time() - t0))
+
+        clusters = {}
+        n = 0
+        for item in cluster.labels_:
+            if item in clusters:
+                clusters[item].append(n)
+            else:
+                clusters[item] = [n]
+            n +=1
+
+        for item in clusters:
+            items_in_cluster = len(clusters[item])
+            cluster_percentage = (items_in_cluster/matrix.shape[0]) * 100.00
+            print("Cluster %s \t size: %s \t percentage: %.2f%%" % (item, items_in_cluster, cluster_percentage))
+
         plt.show()
