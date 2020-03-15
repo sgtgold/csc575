@@ -29,10 +29,9 @@ svd = data.LoadSVD(tfidf_matrix,feat_array,svdPicklePath,40)
 #data.showSVDPlot(tfidf_matrix)
 model = data.extractTopics(tfidf_matrix,nmfPath,num_topics)
 data.display_topics(model,feat_array,num_topics)
-#kPicklePath = './data/kmeans_svd.pickle'
-#clustering.kmeans(svd,kPicklePath,5)
-#hierarchical.cluster(pd.DataFrame(pd.read_pickle(svdPicklePath)).sample(n=25000))
-
-simCluster.singlepass(svd[:10000],0.5,0)
-#simCluster.singlepass(svd,0.5,0)
+kPicklePath = './data/kmeans_svd.pickle'
+clustering.kmeans(svd,kPicklePath,5)
+hierarchical.cluster(pd.DataFrame(pd.read_pickle(svdPicklePath)).sample(n=25000))
+#simCluster.singlepass(svd[:10000],0.5,0)
+simCluster.singlepass(svd,0.5,0)
 
