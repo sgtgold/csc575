@@ -32,6 +32,7 @@
     <Compile Include="packages\hierarchical.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="packages\simCluster.py" />
     <Compile Include="packages\__init__.py">
       <SubType>Code</SubType>
     </Compile>
