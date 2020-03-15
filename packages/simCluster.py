@@ -55,16 +55,16 @@ def singlepass(svd, threshold=0.5, hard = 1):
             sims.append(sim)
     # Step 3. If Simvmax is greater than a threshold value "threshold", add the item to the corresponding cluster and 
     # recalculate the cluster representative; otherwise, use Di to initiate a new cluster.
-        if(sim > threshold):
-                cl.add_vector(currRow,currDoc)
-                noCluster = 0
-    #Step 4. If an item Di remains to be clustered, return to step 2.
-    #Nothing Passes
-        if noCluster == 1:
-            c += 1
-            cc = Cluster('C'+str(c))
-            cc.add_vector(currRow,currDoc)
-            clusters.append(cc)  
+            if(sim > threshold):
+                    cl.add_vector(currRow,currDoc)
+                    noCluster = 0
+        #Step 4. If an item Di remains to be clustered, return to step 2.
+        #Nothing Passes
+            if noCluster == 1:
+                c += 1
+                cc = Cluster('C'+str(c))
+                cc.add_vector(currRow,currDoc)
+                clusters.append(cc)  
     
     print("--- Complete ---", time.asctime( time.localtime(time.time())))
     cSize=[]
