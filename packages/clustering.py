@@ -22,7 +22,7 @@ def kmeans(tfidf_matrix,picklePath,k):
     tri_dists = dists[np.triu_indices(5, 1)]
     max_dist, avg_dist, min_dist = tri_dists.max(), tri_dists.mean(), tri_dists.min()
     print ("Maximum Distance Between Clusters", max_dist)
-    print ("Average  Distance Between Clusters", max_dist)
+    print ("Average  Distance Between Clusters", avg_dist)
 
     # Compute on the upper (or lower) triangular corner of the distance matrix:
 
