@@ -1,18 +1,13 @@
 #!/usr/bin/env python3
-#TODO: create requirments.txt
 #TODO: create readme
 from packages import data
-#rom packages import clustering
 from packages import clustering
-from packages import simCluster
-
+from packages import hierarchical
 import numpy as np
-import time
-
-#from packages import clustering
+import pandas as pd
+from packages import simCluster
 delim = '^~'
 sourcePath = './data/raw_data.csv'
-destPath = './data/tweets.csv'
 tokenPath = './data/tokens.csv'
 nmfPath = './data/nmf.pickle'
 tfidfPath = './data/tfidf_matrix.pickle'
@@ -26,19 +21,18 @@ svdPicklePath = './data/svd.pickle'
 simPicklePath = './data/sim.pickle'
 num_topics = 10
 
-# data.cleanFile(sourcePath,destPath)
-# data.readFileCreateTFIDF(destPath,tokenPath,tfidfPath,vectorPath,featurePickelPath,delim)
-start_time = time.time()
-tfidf_matrix = np.matrix(data.readPickle(tfidfPath).toarray())
-#M,svd = data.ApplySVD(tfidf_matrix,7)
+data.cleanFile(sourcePath,tokenPath,delim)
+data.readFileCreateTFIDF(tokenPath,tfidfPath,vectorPath,featurePickelPath,delim)
+tfidf_matrix = data.readPickle(tfidfPath)
 feat_array = data.readPickle(featurePickelPath)
-#print(len(feat_array))
-#model = data.extractTopics(tfidf_matrix,nmfPath,num_topics)
-#data.display_topics(model,feat_array,num_topics)
-svd = data.readPickle(svdPicklePath)
-clustering.kmeans(svd[:10000],kPicklePath,5)
-#Sample of 10000 document SVDs
+svd = data.LoadSVD(tfidf_matrix,feat_array,svdPicklePath,40)
+#data.showSVDPlot(tfidf_matrix)
+model = data.extractTopics(tfidf_matrix,nmfPath,num_topics)
+data.display_topics(model,feat_array,num_topics)
+#kPicklePath = './data/kmeans_svd.pickle'
+#clustering.kmeans(svd,kPicklePath,5)
+#hierarchical.cluster(pd.DataFrame(pd.read_pickle(svdPicklePath)).T)
+
 simCluster.singlepass(svd[:10000],0.5,0)
 #simCluster.singlepass(svd,0.5,0)
 
-print("--- {:d} sec ---".format(round(time.time() - start_time),0))
