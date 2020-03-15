@@ -51,11 +51,11 @@ def singlepass(svd, threshold=0.5, hard = 1):
         noCluster = 1
         for cl in clusters:
     #Step 2. For Di, calculate the similarity "Sim" with the representative for each existing cluster.
-            sim = 1 - spatial.distance.cosine(cl.centroid,currRow)
+            sim = (1 - spatial.distance.cosine(cl.centroid,currRow))
             sims.append(sim)
     # Step 3. If Simvmax is greater than a threshold value "threshold", add the item to the corresponding cluster and 
     # recalculate the cluster representative; otherwise, use Di to initiate a new cluster.
-        if(sim > threshold):
+            if(sim > threshold):
                 cl.add_vector(currRow,currDoc)
                 noCluster = 0
     #Step 4. If an item Di remains to be clustered, return to step 2.
